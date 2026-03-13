@@ -1,0 +1,602 @@
+<!DOCTYPE html><html lang="en"><head><style>html {
+    --remotion-cli-internals-blue: #0b84f3;
+    --remotion-cli-internals-blue-hovered: #4da3f7;
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+  }
+  
+  body {
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    /* Override Chakra UI position: relative on body */
+    position: static !important;
+  }
+
+  .remotion-splitter {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  .remotion-splitter-horizontal {
+    transform: scaleY(2);
+    background: linear-gradient(
+      to bottom,
+      transparent 25%,
+      black 25%,
+      black 75%,
+      transparent 75%
+    );
+  }
+  
+  .remotion-splitter-horizontal.remotion-splitter-active, .remotion-splitter-horizontal.remotion-splitter-hover {
+    background: linear-gradient(
+      to bottom,
+      transparent 41.666666666666664%,
+      var(--remotion-cli-internals-blue) 41.666666666666664%,
+      var(--remotion-cli-internals-blue) 58.333333333333336%,
+      transparent 58.333333333333336%
+    );
+    cursor: row-resize;
+    transform: scaleY(6);
+    z-index: 1000;
+  }
+  
+  .remotion-splitter-vertical {
+    transform: scaleX(2);
+    background: linear-gradient(
+      to right,
+      transparent 25%,
+      black 25%,
+      black 75%,
+      transparent 75%
+    );
+  }
+  
+  .remotion-splitter-vertical.remotion-splitter-active, .remotion-splitter-vertical.remotion-splitter-hover {
+    background: linear-gradient(
+      to right,
+      transparent 41.666666666666664%,
+      var(--remotion-cli-internals-blue) 41.666666666666664%,
+      var(--remotion-cli-internals-blue) 58.333333333333336%,
+      transparent 58.333333333333336%
+    );
+    transform: scaleX(6);
+    cursor: col-resize;
+    z-index: 1000;
+  }
+  
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  input:focus,
+  textarea:focus,
+  button:focus:not(.__remotion_input_dragger),
+  a:focus {
+    outline: none;
+    box-shadow:
+      inset 1px 1px #555,
+      inset -1px -1px #555,
+      inset 1px -1px #555,
+      inset -1px 1px #555;
+  }
+  
+  input[type='color'].__remotion_color_picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  input[type='color'].__remotion_color_picker::-webkit-color-swatch {
+    border: none;
+  }
+  
+  .__remotion_thumb,
+  .__remotion_thumb::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .__remotion_thumb {
+    pointer-events: none;
+    position: absolute;
+    height: 0;
+    outline: none;
+    top: 15.5px;
+    width: 221px;
+    margin-left: -2px;
+    z-index: 2;
+  }
+  
+  /* For Firefox browsers */
+  .__remotion_thumb::-moz-range-thumb {
+    border: 1px solid black;
+    border-radius: 2px;
+    cursor: pointer;
+    height: 37px;
+    width: 10px;
+    pointer-events: all;
+    border-color: black;
+    background-color: white;
+    position: relative;
+  }
+  
+  /* For Chrome browsers */
+  .__remotion_thumb::-webkit-slider-thumb {
+    border: 1px solid black;
+    border-radius: 2px;
+    cursor: pointer;
+    height: 39px;
+    width: 10px;
+    pointer-events: all;
+    border-color: black;
+    background-color: white;
+    position: relative;
+  }  
+
+  .__remotion_input_dragger:hover span {
+    color: var(--remotion-cli-internals-blue-hovered) !important;
+  }
+
+  .__remotion-default-props-editor-label-active span {
+    color: var(--remotion-cli-internals-blue) !important;
+    transition: color 0.2s ease-in-out;
+  }</style><style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+	    background-color: #1f2428;
+    }
+    .__remotion_objectfitcontain {
+      object-fit: contain;
+    }
+    </style><style>
+  .css-reset, .css-reset * {
+    font-size: 16px;
+    line-height: 1.5;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    background: transparent;
+    box-sizing: border-box;
+  }
+
+  .algolia-docsearch-suggestion--highlight {
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  .__remotion-info-button-container code {
+    font-family: monospace;
+    font-size: 14px;
+    color: #0584f2
+  }
+
+  .__remotion-vertical-scrollbar::-webkit-scrollbar {
+      width: 6px;
+  }
+  .__remotion-vertical-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.0);
+  }
+  .__remotion-vertical-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .__remotion-vertical-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 1);
+  }
+
+
+  .__remotion-horizontal-scrollbar::-webkit-scrollbar {
+    height: 6px;
+  }
+  .__remotion-horizontal-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.0);
+  }
+  .__remotion-horizontal-scrollbar:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .__remotion-horizontal-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 1);
+  }
+
+
+  @-moz-document url-prefix() {
+    .__remotion-vertical-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.6) rgba(0, 0, 0, 0);
+    }
+
+    .__remotion-vertical-scrollbar:hover {
+      scrollbar-color: rgba(0, 0, 0, 1) rgba(0, 0, 0, 0);
+    }
+
+    .__remotion-horizontal-scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.6) rgba(0, 0, 0, 0);
+    }
+
+    .__remotion-horizontal-scrollbar:hover {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 1) rgba(0, 0, 0, 0);
+    }
+  }
+
+
+  .__remotion-timeline-slider {
+    appearance: none;
+    width: 100px;
+    border-radius: 3px;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    accent-color: #ffffff;
+  }
+  
+  .__remotion-timeline-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    appearance: none;
+  }
+</style>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link id="__remotion_favicon" rel="icon" type="image/png" href="/favicon.ico">
+		<title>LiverVideo / movie_01 - Remotion Studio</title>
+	<style>/*! tailwindcss v4.2.0 | MIT License | https://tailwindcss.com */
+@layer properties;
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    --spacing: 0.25rem;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-font-family: var(--font-sans);
+    --default-font-feature-settings: var(--font-sans--font-feature-settings);
+    --default-font-variation-settings: var(
+      --font-sans--font-variation-settings
+    );
+    --default-mono-font-family: var(--font-mono);
+    --default-mono-font-feature-settings: var(
+      --font-mono--font-feature-settings
+    );
+    --default-mono-font-variation-settings: var(
+      --font-mono--font-variation-settings
+    );
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var( --default-font-family, ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" );
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var( --default-font-variation-settings, normal );
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    line-height: inherit;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var( --default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace );
+    font-feature-settings: var( --default-mono-font-feature-settings, normal );
+    font-variation-settings: var( --default-mono-font-variation-settings, normal );
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+    color: currentColor;
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, currentColor 50%, transparent);
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .visible {
+    visibility: visible;
+  }
+  .absolute {
+    position: absolute;
+  }
+  .relative {
+    position: relative;
+  }
+  .static {
+    position: static;
+  }
+  .start {
+    inset-inline-start: var(--spacing);
+  }
+  .end {
+    inset-inline-end: var(--spacing);
+  }
+  .container {
+    width: 100%;
+    @media (width >= 40rem) {
+      max-width: 40rem;
+    }
+    @media (width >= 48rem) {
+      max-width: 48rem;
+    }
+    @media (width >= 64rem) {
+      max-width: 64rem;
+    }
+    @media (width >= 80rem) {
+      max-width: 80rem;
+    }
+    @media (width >= 96rem) {
+      max-width: 96rem;
+    }
+  }
+  .block {
+    display: block;
+  }
+  .flex {
+    display: flex;
+  }
+  .hidden {
+    display: none;
+  }
+  .inline {
+    display: inline;
+  }
+  .table {
+    display: table;
+  }
+  .flex-shrink {
+    flex-shrink: 1;
+  }
+  .border-collapse {
+    border-collapse: collapse;
+  }
+  .transform {
+    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
+  .resize {
+    resize: both;
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .italic {
+    font-style: italic;
+  }
+  .line-through {
+    text-decoration-line: line-through;
+  }
+  .underline {
+    text-decoration-line: underline;
+  }
+  .outline {
+    outline-style: var(--tw-outline-style);
+    outline-width: 1px;
+  }
+  .transition {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
+      --tw-border-style: solid;
+      --tw-outline-style: solid;
+    }
+  }
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9pbmRleC5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUEsZ0VBQWdFO0FBQ2hFLGlCQUFpQjtBQUNqQix5Q0FBeUM7QUFDekM7RUFDRTtJQUNFOzZEQUN5RDtJQUN6RDtpREFDNkM7SUFDN0Msa0JBQWtCO0lBQ2xCLG9DQUFvQztJQUNwQyxrRUFBa0U7SUFDbEUsdUNBQXVDO0lBQ3ZDLHdFQUF3RTtJQUN4RTs7S0FFQztJQUNELDRDQUE0QztJQUM1Qzs7S0FFQztJQUNEOztLQUVDO0VBQ0g7QUFDRjtBQUNBO0VBQ0U7SUFDRSxzQkFBc0I7SUFDdEIsU0FBUztJQUNULFVBQVU7SUFDVixlQUFlO0VBQ2pCO0VBQ0E7SUFDRSxnQkFBZ0I7SUFDaEIsOEJBQThCO0lBQzlCLFdBQVc7SUFDWCw2SkFBNko7SUFDN0osbUVBQW1FO0lBQ25FLHlFQUF5RTtJQUN6RSx3Q0FBd0M7RUFDMUM7RUFDQTtJQUNFLG9CQUFvQjtFQUN0QjtFQUNBO0lBQ0UsU0FBUztJQUNULGNBQWM7SUFDZCxxQkFBcUI7RUFDdkI7RUFDQTtJQUNFLHlDQUF5QztJQUN6QyxpQ0FBaUM7RUFDbkM7RUFDQTtJQUNFLGtCQUFrQjtJQUNsQixvQkFBb0I7RUFDdEI7RUFDQTtJQUNFLGNBQWM7SUFDZCxnQ0FBZ0M7SUFDaEMsd0JBQXdCO0VBQzFCO0VBQ0E7SUFDRSxtQkFBbUI7RUFDckI7RUFDQTtJQUNFLGtKQUFrSjtJQUNsSiwwRUFBMEU7SUFDMUUsOEVBQThFO0lBQzlFLGNBQWM7RUFDaEI7RUFDQTtJQUNFLGNBQWM7RUFDaEI7RUFDQTtJQUNFLGNBQWM7SUFDZCxjQUFjO0lBQ2Qsa0JBQWtCO0lBQ2xCLHdCQUF3QjtFQUMxQjtFQUNBO0lBQ0UsZUFBZTtFQUNqQjtFQUNBO0lBQ0UsV0FBVztFQUNiO0VBQ0E7SUFDRSxjQUFjO0lBQ2QscUJBQXFCO0lBQ3JCLHlCQUF5QjtFQUMzQjtFQUNBO0lBQ0UsYUFBYTtFQUNmO0VBQ0E7SUFDRSx3QkFBd0I7RUFDMUI7RUFDQTtJQUNFLGtCQUFrQjtFQUNwQjtFQUNBO0lBQ0UsZ0JBQWdCO0VBQ2xCO0VBQ0E7SUFDRSxjQUFjO0lBQ2Qsc0JBQXNCO0VBQ3hCO0VBQ0E7SUFDRSxlQUFlO0lBQ2YsWUFBWTtFQUNkO0VBQ0E7SUFDRSxhQUFhO0lBQ2IsOEJBQThCO0lBQzlCLGdDQUFnQztJQUNoQyx1QkFBdUI7SUFDdkIsY0FBYztJQUNkLGdCQUFnQjtJQUNoQiw2QkFBNkI7SUFDN0IsVUFBVTtFQUNaO0VBQ0E7SUFDRSxtQkFBbUI7RUFDckI7RUFDQTtJQUNFLDBCQUEwQjtFQUM1QjtFQUNBO0lBQ0Usc0JBQXNCO0VBQ3hCO0VBQ0E7SUFDRSxVQUFVO0lBQ1YsbUJBQW1CO0lBQ25CO01BQ0UseURBQXlEO0lBQzNEO0VBQ0Y7RUFDQTtJQUNFLGdCQUFnQjtFQUNsQjtFQUNBO0lBQ0Usd0JBQXdCO0VBQzFCO0VBQ0E7SUFDRSxlQUFlO0lBQ2YsbUJBQW1CO0VBQ3JCO0VBQ0E7SUFDRSxvQkFBb0I7RUFDdEI7RUFDQTtJQUNFLFVBQVU7RUFDWjtFQUNBO0lBQ0UsZ0JBQWdCO0VBQ2xCO0VBQ0E7SUFDRSxnQkFBZ0I7RUFDbEI7RUFDQTtJQUNFLGtCQUFrQjtFQUNwQjtFQUNBO0lBQ0UsWUFBWTtFQUNkO0VBQ0E7SUFDRSx3QkFBd0I7RUFDMUI7QUFDRjtBQUNBO0VBQ0U7SUFDRSxtQkFBbUI7RUFDckI7RUFDQTtJQUNFLGtCQUFrQjtFQUNwQjtFQUNBO0lBQ0Usa0JBQWtCO0VBQ3BCO0VBQ0E7SUFDRSxnQkFBZ0I7RUFDbEI7RUFDQTtJQUNFLGtDQUFrQztFQUNwQztFQUNBO0lBQ0UsZ0NBQWdDO0VBQ2xDO0VBQ0E7SUFDRSxXQUFXO0lBQ1g7TUFDRSxnQkFBZ0I7SUFDbEI7SUFDQTtNQUNFLGdCQUFnQjtJQUNsQjtJQUNBO01BQ0UsZ0JBQWdCO0lBQ2xCO0lBQ0E7TUFDRSxnQkFBZ0I7SUFDbEI7SUFDQTtNQUNFLGdCQUFnQjtJQUNsQjtFQUNGO0VBQ0E7SUFDRSxjQUFjO0VBQ2hCO0VBQ0E7SUFDRSxhQUFhO0VBQ2Y7RUFDQTtJQUNFLGFBQWE7RUFDZjtFQUNBO0lBQ0UsZUFBZTtFQUNqQjtFQUNBO0lBQ0UsY0FBYztFQUNoQjtFQUNBO0lBQ0UsY0FBYztFQUNoQjtFQUNBO0lBQ0UseUJBQXlCO0VBQzNCO0VBQ0E7SUFDRSwwR0FBMEc7RUFDNUc7RUFDQTtJQUNFLFlBQVk7RUFDZDtFQUNBO0lBQ0Usb0NBQW9DO0lBQ3BDLGlCQUFpQjtFQUNuQjtFQUNBO0lBQ0Usa0JBQWtCO0VBQ3BCO0VBQ0E7SUFDRSxrQ0FBa0M7RUFDcEM7RUFDQTtJQUNFLCtCQUErQjtFQUNqQztFQUNBO0lBQ0Usc0NBQXNDO0lBQ3RDLGtCQUFrQjtFQUNwQjtFQUNBO0lBQ0UseVVBQXlVO0lBQ3pVLHFGQUFxRjtJQUNyRiwyRUFBMkU7RUFDN0U7QUFDRjtBQUNBO0VBQ0UsV0FBVztFQUNYLGVBQWU7QUFDakI7QUFDQTtFQUNFLFdBQVc7RUFDWCxlQUFlO0FBQ2pCO0FBQ0E7RUFDRSxXQUFXO0VBQ1gsZUFBZTtBQUNqQjtBQUNBO0VBQ0UsV0FBVztFQUNYLGVBQWU7QUFDakI7QUFDQTtFQUNFLFdBQVc7RUFDWCxlQUFlO0FBQ2pCO0FBQ0E7RUFDRSxXQUFXO0VBQ1gsZUFBZTtFQUNmLG9CQUFvQjtBQUN0QjtBQUNBO0VBQ0UsV0FBVztFQUNYLGVBQWU7RUFDZixvQkFBb0I7QUFDdEI7QUFDQTtFQUNFO0lBQ0U7TUFDRSxzQkFBc0I7TUFDdEIsc0JBQXNCO01BQ3RCLHNCQUFzQjtNQUN0QixvQkFBb0I7TUFDcEIsb0JBQW9CO01BQ3BCLHdCQUF3QjtNQUN4Qix5QkFBeUI7SUFDM0I7RUFDRjtBQUNGIiwic291cmNlc0NvbnRlbnQiOlsiLyohIHRhaWx3aW5kY3NzIHY0LjIuMCB8IE1JVCBMaWNlbnNlIHwgaHR0cHM6Ly90YWlsd2luZGNzcy5jb20gKi9cbkBsYXllciBwcm9wZXJ0aWVzO1xuQGxheWVyIHRoZW1lLCBiYXNlLCBjb21wb25lbnRzLCB1dGlsaXRpZXM7XG5AbGF5ZXIgdGhlbWUge1xuICA6cm9vdCwgOmhvc3Qge1xuICAgIC0tZm9udC1zYW5zOiB1aS1zYW5zLXNlcmlmLCBzeXN0ZW0tdWksIHNhbnMtc2VyaWYsIFwiQXBwbGUgQ29sb3IgRW1vamlcIixcbiAgICAgIFwiU2Vnb2UgVUkgRW1vamlcIiwgXCJTZWdvZSBVSSBTeW1ib2xcIiwgXCJOb3RvIENvbG9yIEVtb2ppXCI7XG4gICAgLS1mb250LW1vbm86IHVpLW1vbm9zcGFjZSwgU0ZNb25vLVJlZ3VsYXIsIE1lbmxvLCBNb25hY28sIENvbnNvbGFzLFxuICAgICAgXCJMaWJlcmF0aW9uIE1vbm9cIiwgXCJDb3VyaWVyIE5ld1wiLCBtb25vc3BhY2U7XG4gICAgLS1zcGFjaW5nOiAwLjI1cmVtO1xuICAgIC0tZGVmYXVsdC10cmFuc2l0aW9uLWR1cmF0aW9uOiAxNTBtcztcbiAgICAtLWRlZmF1bHQtdHJhbnNpdGlvbi10aW1pbmctZnVuY3Rpb246IGN1YmljLWJlemllcigwLjQsIDAsIDAuMiwgMSk7XG4gICAgLS1kZWZhdWx0LWZvbnQtZmFtaWx5OiB2YXIoLS1mb250LXNhbnMpO1xuICAgIC0tZGVmYXVsdC1mb250LWZlYXR1cmUtc2V0dGluZ3M6IHZhcigtLWZvbnQtc2Fucy0tZm9udC1mZWF0dXJlLXNldHRpbmdzKTtcbiAgICAtLWRlZmF1bHQtZm9udC12YXJpYXRpb24tc2V0dGluZ3M6IHZhcihcbiAgICAgIC0tZm9udC1zYW5zLS1mb250LXZhcmlhdGlvbi1zZXR0aW5nc1xuICAgICk7XG4gICAgLS1kZWZhdWx0LW1vbm8tZm9udC1mYW1pbHk6IHZhcigtLWZvbnQtbW9ubyk7XG4gICAgLS1kZWZhdWx0LW1vbm8tZm9udC1mZWF0dXJlLXNldHRpbmdzOiB2YXIoXG4gICAgICAtLWZvbnQtbW9uby0tZm9udC1mZWF0dXJlLXNldHRpbmdzXG4gICAgKTtcbiAgICAtLWRlZmF1bHQtbW9uby1mb250LXZhcmlhdGlvbi1zZXR0aW5nczogdmFyKFxuICAgICAgLS1mb250LW1vbm8tLWZvbnQtdmFyaWF0aW9uLXNldHRpbmdzXG4gICAgKTtcbiAgfVxufVxuQGxheWVyIGJhc2Uge1xuICAqLCA6OmFmdGVyLCA6OmJlZm9yZSwgOjpiYWNrZHJvcCwgOjpmaWxlLXNlbGVjdG9yLWJ1dHRvbiB7XG4gICAgYm94LXNpemluZzogYm9yZGVyLWJveDtcbiAgICBtYXJnaW46IDA7XG4gICAgcGFkZGluZzogMDtcbiAgICBib3JkZXI6IDAgc29saWQ7XG4gIH1cbiAgaHRtbCwgOmhvc3Qge1xuICAgIGxpbmUtaGVpZ2h0OiAxLjU7XG4gICAgLXdlYmtpdC10ZXh0LXNpemUtYWRqdXN0OiAxMDAlO1xuICAgIHRhYi1zaXplOiA0O1xuICAgIGZvbnQtZmFtaWx5OiB2YXIoIC0tZGVmYXVsdC1mb250LWZhbWlseSwgdWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmLCBcIkFwcGxlIENvbG9yIEVtb2ppXCIsIFwiU2Vnb2UgVUkgRW1vamlcIiwgXCJTZWdvZSBVSSBTeW1ib2xcIiwgXCJOb3RvIENvbG9yIEVtb2ppXCIgKTtcbiAgICBmb250LWZlYXR1cmUtc2V0dGluZ3M6IHZhcigtLWRlZmF1bHQtZm9udC1mZWF0dXJlLXNldHRpbmdzLCBub3JtYWwpO1xuICAgIGZvbnQtdmFyaWF0aW9uLXNldHRpbmdzOiB2YXIoIC0tZGVmYXVsdC1mb250LXZhcmlhdGlvbi1zZXR0aW5ncywgbm9ybWFsICk7XG4gICAgLXdlYmtpdC10YXAtaGlnaGxpZ2h0LWNvbG9yOiB0cmFuc3BhcmVudDtcbiAgfVxuICBib2R5IHtcbiAgICBsaW5lLWhlaWdodDogaW5oZXJpdDtcbiAgfVxuICBociB7XG4gICAgaGVpZ2h0OiAwO1xuICAgIGNvbG9yOiBpbmhlcml0O1xuICAgIGJvcmRlci10b3Atd2lkdGg6IDFweDtcbiAgfVxuICBhYmJyOndoZXJlKFt0aXRsZV0pIHtcbiAgICAtd2Via2l0LXRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lIGRvdHRlZDtcbiAgICB0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZSBkb3R0ZWQ7XG4gIH1cbiAgaDEsIGgyLCBoMywgaDQsIGg1LCBoNiB7XG4gICAgZm9udC1zaXplOiBpbmhlcml0O1xuICAgIGZvbnQtd2VpZ2h0OiBpbmhlcml0O1xuICB9XG4gIGEge1xuICAgIGNvbG9yOiBpbmhlcml0O1xuICAgIC13ZWJraXQtdGV4dC1kZWNvcmF0aW9uOiBpbmhlcml0O1xuICAgIHRleHQtZGVjb3JhdGlvbjogaW5oZXJpdDtcbiAgfVxuICBiLCBzdHJvbmcge1xuICAgIGZvbnQtd2VpZ2h0OiBib2xkZXI7XG4gIH1cbiAgY29kZSwga2JkLCBzYW1wLCBwcmUge1xuICAgIGZvbnQtZmFtaWx5OiB2YXIoIC0tZGVmYXVsdC1tb25vLWZvbnQtZmFtaWx5LCB1aS1tb25vc3BhY2UsIFNGTW9uby1SZWd1bGFyLCBNZW5sbywgTW9uYWNvLCBDb25zb2xhcywgXCJMaWJlcmF0aW9uIE1vbm9cIiwgXCJDb3VyaWVyIE5ld1wiLCBtb25vc3BhY2UgKTtcbiAgICBmb250LWZlYXR1cmUtc2V0dGluZ3M6IHZhciggLS1kZWZhdWx0LW1vbm8tZm9udC1mZWF0dXJlLXNldHRpbmdzLCBub3JtYWwgKTtcbiAgICBmb250LXZhcmlhdGlvbi1zZXR0aW5nczogdmFyKCAtLWRlZmF1bHQtbW9uby1mb250LXZhcmlhdGlvbi1zZXR0aW5ncywgbm9ybWFsICk7XG4gICAgZm9udC1zaXplOiAxZW07XG4gIH1cbiAgc21hbGwge1xuICAgIGZvbnQtc2l6ZTogODAlO1xuICB9XG4gIHN1Yiwgc3VwIHtcbiAgICBmb250LXNpemU6IDc1JTtcbiAgICBsaW5lLWhlaWdodDogMDtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgdmVydGljYWwtYWxpZ246IGJhc2VsaW5lO1xuICB9XG4gIHN1YiB7XG4gICAgYm90dG9tOiAtMC4yNWVtO1xuICB9XG4gIHN1cCB7XG4gICAgdG9wOiAtMC41ZW07XG4gIH1cbiAgdGFibGUge1xuICAgIHRleHQtaW5kZW50OiAwO1xuICAgIGJvcmRlci1jb2xvcjogaW5oZXJpdDtcbiAgICBib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlO1xuICB9XG4gIDotbW96LWZvY3VzcmluZyB7XG4gICAgb3V0bGluZTogYXV0bztcbiAgfVxuICBwcm9ncmVzcyB7XG4gICAgdmVydGljYWwtYWxpZ246IGJhc2VsaW5lO1xuICB9XG4gIHN1bW1hcnkge1xuICAgIGRpc3BsYXk6IGxpc3QtaXRlbTtcbiAgfVxuICBvbCwgdWwsIG1lbnUge1xuICAgIGxpc3Qtc3R5bGU6IG5vbmU7XG4gIH1cbiAgaW1nLCBzdmcsIHZpZGVvLCBjYW52YXMsIGF1ZGlvLCBpZnJhbWUsIGVtYmVkLCBvYmplY3Qge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XG4gIH1cbiAgaW1nLCB2aWRlbyB7XG4gICAgbWF4LXdpZHRoOiAxMDAlO1xuICAgIGhlaWdodDogYXV0bztcbiAgfVxuICBidXR0b24sIGlucHV0LCBzZWxlY3QsIG9wdGdyb3VwLCB0ZXh0YXJlYSwgOjpmaWxlLXNlbGVjdG9yLWJ1dHRvbiB7XG4gICAgZm9udDogaW5oZXJpdDtcbiAgICBmb250LWZlYXR1cmUtc2V0dGluZ3M6IGluaGVyaXQ7XG4gICAgZm9udC12YXJpYXRpb24tc2V0dGluZ3M6IGluaGVyaXQ7XG4gICAgbGV0dGVyLXNwYWNpbmc6IGluaGVyaXQ7XG4gICAgY29sb3I6IGluaGVyaXQ7XG4gICAgYm9yZGVyLXJhZGl1czogMDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB0cmFuc3BhcmVudDtcbiAgICBvcGFjaXR5OiAxO1xuICB9XG4gIDp3aGVyZShzZWxlY3Q6aXMoW211bHRpcGxlXSwgW3NpemVdKSkgb3B0Z3JvdXAge1xuICAgIGZvbnQtd2VpZ2h0OiBib2xkZXI7XG4gIH1cbiAgOndoZXJlKHNlbGVjdDppcyhbbXVsdGlwbGVdLCBbc2l6ZV0pKSBvcHRncm91cCBvcHRpb24ge1xuICAgIHBhZGRpbmctaW5saW5lLXN0YXJ0OiAyMHB4O1xuICB9XG4gIDo6ZmlsZS1zZWxlY3Rvci1idXR0b24ge1xuICAgIG1hcmdpbi1pbmxpbmUtZW5kOiA0cHg7XG4gIH1cbiAgOjpwbGFjZWhvbGRlciB7XG4gICAgb3BhY2l0eTogMTtcbiAgICBjb2xvcjogY3VycmVudENvbG9yO1xuICAgIEBzdXBwb3J0cyAoY29sb3I6IGNvbG9yLW1peChpbiBsYWIsIHJlZCwgcmVkKSkge1xuICAgICAgY29sb3I6IGNvbG9yLW1peChpbiBva2xhYiwgY3VycmVudENvbG9yIDUwJSwgdHJhbnNwYXJlbnQpO1xuICAgIH1cbiAgfVxuICB0ZXh0YXJlYSB7XG4gICAgcmVzaXplOiB2ZXJ0aWNhbDtcbiAgfVxuICA6Oi13ZWJraXQtc2VhcmNoLWRlY29yYXRpb24ge1xuICAgIC13ZWJraXQtYXBwZWFyYW5jZTogbm9uZTtcbiAgfVxuICA6Oi13ZWJraXQtZGF0ZS1hbmQtdGltZS12YWx1ZSB7XG4gICAgbWluLWhlaWdodDogMWxoO1xuICAgIHRleHQtYWxpZ246IGluaGVyaXQ7XG4gIH1cbiAgOjotd2Via2l0LWRhdGV0aW1lLWVkaXQge1xuICAgIGRpc3BsYXk6IGlubGluZS1mbGV4O1xuICB9XG4gIDo6LXdlYmtpdC1kYXRldGltZS1lZGl0LWZpZWxkcy13cmFwcGVyIHtcbiAgICBwYWRkaW5nOiAwO1xuICB9XG4gIDo6LXdlYmtpdC1kYXRldGltZS1lZGl0LCA6Oi13ZWJraXQtZGF0ZXRpbWUtZWRpdC15ZWFyLWZpZWxkLCA6Oi13ZWJraXQtZGF0ZXRpbWUtZWRpdC1tb250aC1maWVsZCwgOjotd2Via2l0LWRhdGV0aW1lLWVkaXQtZGF5LWZpZWxkLCA6Oi13ZWJraXQtZGF0ZXRpbWUtZWRpdC1ob3VyLWZpZWxkLCA6Oi13ZWJraXQtZGF0ZXRpbWUtZWRpdC1taW51dGUtZmllbGQsIDo6LXdlYmtpdC1kYXRldGltZS1lZGl0LXNlY29uZC1maWVsZCwgOjotd2Via2l0LWRhdGV0aW1lLWVkaXQtbWlsbGlzZWNvbmQtZmllbGQsIDo6LXdlYmtpdC1kYXRldGltZS1lZGl0LW1lcmlkaWVtLWZpZWxkIHtcbiAgICBwYWRkaW5nLWJsb2NrOiAwO1xuICB9XG4gIDotbW96LXVpLWludmFsaWQge1xuICAgIGJveC1zaGFkb3c6IG5vbmU7XG4gIH1cbiAgYnV0dG9uLCBpbnB1dDp3aGVyZShbdHlwZT1cImJ1dHRvblwiXSwgW3R5cGU9XCJyZXNldFwiXSwgW3R5cGU9XCJzdWJtaXRcIl0pLCA6OmZpbGUtc2VsZWN0b3ItYnV0dG9uIHtcbiAgICBhcHBlYXJhbmNlOiBidXR0b247XG4gIH1cbiAgOjotd2Via2l0LWlubmVyLXNwaW4tYnV0dG9uLCA6Oi13ZWJraXQtb3V0ZXItc3Bpbi1idXR0b24ge1xuICAgIGhlaWdodDogYXV0bztcbiAgfVxuICBbaGlkZGVuXTp3aGVyZSg6bm90KFtoaWRkZW49XCJ1bnRpbC1mb3VuZFwiXSkpIHtcbiAgICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7XG4gIH1cbn1cbkBsYXllciB1dGlsaXRpZXMge1xuICAudmlzaWJsZSB7XG4gICAgdmlzaWJpbGl0eTogdmlzaWJsZTtcbiAgfVxuICAuYWJzb2x1dGUge1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgfVxuICAucmVsYXRpdmUge1xuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgfVxuICAuc3RhdGljIHtcbiAgICBwb3NpdGlvbjogc3RhdGljO1xuICB9XG4gIC5zdGFydCB7XG4gICAgaW5zZXQtaW5saW5lLXN0YXJ0OiB2YXIoLS1zcGFjaW5nKTtcbiAgfVxuICAuZW5kIHtcbiAgICBpbnNldC1pbmxpbmUtZW5kOiB2YXIoLS1zcGFjaW5nKTtcbiAgfVxuICAuY29udGFpbmVyIHtcbiAgICB3aWR0aDogMTAwJTtcbiAgICBAbWVkaWEgKHdpZHRoID49IDQwcmVtKSB7XG4gICAgICBtYXgtd2lkdGg6IDQwcmVtO1xuICAgIH1cbiAgICBAbWVkaWEgKHdpZHRoID49IDQ4cmVtKSB7XG4gICAgICBtYXgtd2lkdGg6IDQ4cmVtO1xuICAgIH1cbiAgICBAbWVkaWEgKHdpZHRoID49IDY0cmVtKSB7XG4gICAgICBtYXgtd2lkdGg6IDY0cmVtO1xuICAgIH1cbiAgICBAbWVkaWEgKHdpZHRoID49IDgwcmVtKSB7XG4gICAgICBtYXgtd2lkdGg6IDgwcmVtO1xuICAgIH1cbiAgICBAbWVkaWEgKHdpZHRoID49IDk2cmVtKSB7XG4gICAgICBtYXgtd2lkdGg6IDk2cmVtO1xuICAgIH1cbiAgfVxuICAuYmxvY2sge1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICB9XG4gIC5mbGV4IHtcbiAgICBkaXNwbGF5OiBmbGV4O1xuICB9XG4gIC5oaWRkZW4ge1xuICAgIGRpc3BsYXk6IG5vbmU7XG4gIH1cbiAgLmlubGluZSB7XG4gICAgZGlzcGxheTogaW5saW5lO1xuICB9XG4gIC50YWJsZSB7XG4gICAgZGlzcGxheTogdGFibGU7XG4gIH1cbiAgLmZsZXgtc2hyaW5rIHtcbiAgICBmbGV4LXNocmluazogMTtcbiAgfVxuICAuYm9yZGVyLWNvbGxhcHNlIHtcbiAgICBib3JkZXItY29sbGFwc2U6IGNvbGxhcHNlO1xuICB9XG4gIC50cmFuc2Zvcm0ge1xuICAgIHRyYW5zZm9ybTogdmFyKC0tdHctcm90YXRlLXgsKSB2YXIoLS10dy1yb3RhdGUteSwpIHZhcigtLXR3LXJvdGF0ZS16LCkgdmFyKC0tdHctc2tldy14LCkgdmFyKC0tdHctc2tldy15LCk7XG4gIH1cbiAgLnJlc2l6ZSB7XG4gICAgcmVzaXplOiBib3RoO1xuICB9XG4gIC5ib3JkZXIge1xuICAgIGJvcmRlci1zdHlsZTogdmFyKC0tdHctYm9yZGVyLXN0eWxlKTtcbiAgICBib3JkZXItd2lkdGg6IDFweDtcbiAgfVxuICAuaXRhbGljIHtcbiAgICBmb250LXN0eWxlOiBpdGFsaWM7XG4gIH1cbiAgLmxpbmUtdGhyb3VnaCB7XG4gICAgdGV4dC1kZWNvcmF0aW9uLWxpbmU6IGxpbmUtdGhyb3VnaDtcbiAgfVxuICAudW5kZXJsaW5lIHtcbiAgICB0ZXh0LWRlY29yYXRpb24tbGluZTogdW5kZXJsaW5lO1xuICB9XG4gIC5vdXRsaW5lIHtcbiAgICBvdXRsaW5lLXN0eWxlOiB2YXIoLS10dy1vdXRsaW5lLXN0eWxlKTtcbiAgICBvdXRsaW5lLXdpZHRoOiAxcHg7XG4gIH1cbiAgLnRyYW5zaXRpb24ge1xuICAgIHRyYW5zaXRpb24tcHJvcGVydHk6IGNvbG9yLCBiYWNrZ3JvdW5kLWNvbG9yLCBib3JkZXItY29sb3IsIG91dGxpbmUtY29sb3IsIHRleHQtZGVjb3JhdGlvbi1jb2xvciwgZmlsbCwgc3Ryb2tlLCAtLXR3LWdyYWRpZW50LWZyb20sIC0tdHctZ3JhZGllbnQtdmlhLCAtLXR3LWdyYWRpZW50LXRvLCBvcGFjaXR5LCBib3gtc2hhZG93LCB0cmFuc2Zvcm0sIHRyYW5zbGF0ZSwgc2NhbGUsIHJvdGF0ZSwgZmlsdGVyLCAtd2Via2l0LWJhY2tkcm9wLWZpbHRlciwgYmFja2Ryb3AtZmlsdGVyLCBkaXNwbGF5LCBjb250ZW50LXZpc2liaWxpdHksIG92ZXJsYXksIHBvaW50ZXItZXZlbnRzO1xuICAgIHRyYW5zaXRpb24tdGltaW5nLWZ1bmN0aW9uOiB2YXIoLS10dy1lYXNlLCB2YXIoLS1kZWZhdWx0LXRyYW5zaXRpb24tdGltaW5nLWZ1bmN0aW9uKSk7XG4gICAgdHJhbnNpdGlvbi1kdXJhdGlvbjogdmFyKC0tdHctZHVyYXRpb24sIHZhcigtLWRlZmF1bHQtdHJhbnNpdGlvbi1kdXJhdGlvbikpO1xuICB9XG59XG5AcHJvcGVydHkgLS10dy1yb3RhdGUteCB7XG4gIHN5bnRheDogXCIqXCI7XG4gIGluaGVyaXRzOiBmYWxzZTtcbn1cbkBwcm9wZXJ0eSAtLXR3LXJvdGF0ZS15IHtcbiAgc3ludGF4OiBcIipcIjtcbiAgaW5oZXJpdHM6IGZhbHNlO1xufVxuQHByb3BlcnR5IC0tdHctcm90YXRlLXoge1xuICBzeW50YXg6IFwiKlwiO1xuICBpbmhlcml0czogZmFsc2U7XG59XG5AcHJvcGVydHkgLS10dy1za2V3LXgge1xuICBzeW50YXg6IFwiKlwiO1xuICBpbmhlcml0czogZmFsc2U7XG59XG5AcHJvcGVydHkgLS10dy1za2V3LXkge1xuICBzeW50YXg6IFwiKlwiO1xuICBpbmhlcml0czogZmFsc2U7XG59XG5AcHJvcGVydHkgLS10dy1ib3JkZXItc3R5bGUge1xuICBzeW50YXg6IFwiKlwiO1xuICBpbmhlcml0czogZmFsc2U7XG4gIGluaXRpYWwtdmFsdWU6IHNvbGlkO1xufVxuQHByb3BlcnR5IC0tdHctb3V0bGluZS1zdHlsZSB7XG4gIHN5bnRheDogXCIqXCI7XG4gIGluaGVyaXRzOiBmYWxzZTtcbiAgaW5pdGlhbC12YWx1ZTogc29saWQ7XG59XG5AbGF5ZXIgcHJvcGVydGllcyB7XG4gIEBzdXBwb3J0cyAoKC13ZWJraXQtaHlwaGVuczogbm9uZSkgYW5kIChub3QgKG1hcmdpbi10cmltOiBpbmxpbmUpKSkgb3IgKCgtbW96LW9yaWVudDogaW5saW5lKSBhbmQgKG5vdCAoY29sb3I6cmdiKGZyb20gcmVkIHIgZyBiKSkpKSB7XG4gICAgKiwgOjpiZWZvcmUsIDo6YWZ0ZXIsIDo6YmFja2Ryb3Age1xuICAgICAgLS10dy1yb3RhdGUteDogaW5pdGlhbDtcbiAgICAgIC0tdHctcm90YXRlLXk6IGluaXRpYWw7XG4gICAgICAtLXR3LXJvdGF0ZS16OiBpbml0aWFsO1xuICAgICAgLS10dy1za2V3LXg6IGluaXRpYWw7XG4gICAgICAtLXR3LXNrZXcteTogaW5pdGlhbDtcbiAgICAgIC0tdHctYm9yZGVyLXN0eWxlOiBzb2xpZDtcbiAgICAgIC0tdHctb3V0bGluZS1zdHlsZTogc29saWQ7XG4gICAgfVxuICB9XG59XG4iXSwic291cmNlUm9vdCI6IiJ9 */</style></head>
+	<body>
+		<script>window.remotion_numberOfAudioTags = 0;</script>
+		<script>window.remotion_audioLatencyHint = "interactive";</script>
+		<script>window.remotion_logLevel = "info";</script>
+		<script>window.remotion_staticBase = "/static-5fa684cea1f1";</script>
+		<script>window.remotion_editorName = "C:\\WINDOWS\\notepad.exe";</script>
+		<script>window.remotion_projectName = "movie_01";</script>
+		<script>window.remotion_publicPath = "/";</script>
+		<script>window.remotion_audioEnabled = true;</script>
+		<script>window.remotion_videoEnabled = true;</script>
+		<script>window.remotion_renderDefaults = {"darkMode":false,"jpegQuality":80,"scale":1,"logLevel":"info","codec":"h264","concurrency":4,"maxConcurrency":8,"minConcurrency":1,"stillImageFormat":"png","videoImageFormat":"jpeg","muted":false,"enforceAudioTrack":false,"proResProfile":null,"x264Preset":"medium","pixelFormat":"yuv420p","audioBitrate":null,"videoBitrate":null,"encodingBufferSize":null,"encodingMaxRate":null,"everyNthFrame":1,"delayRenderTimeout":30000,"audioCodec":null,"disableWebSecurity":false,"headless":true,"ignoreCertificateErrors":false,"openGlRenderer":null,"offthreadVideoCacheSizeInBytes":null,"offthreadVideoThreads":null,"colorSpace":"default","multiProcessOnLinux":true,"userAgent":null,"repro":false,"numberOfGifLoops":null,"beepOnFinish":false,"forSeamlessAacConcatenation":false,"hardwareAcceleration":"disable","chromeMode":"headless-shell","mediaCacheSizeInBytes":null,"publicLicenseKey":null,"outputLocation":null};</script>
+		<script>window.remotion_cwd = "C:\\Users\\user\\movie_01";</script>
+		<script>window.remotion_studioServerCommand = "npx remotion studio";</script>
+		<script>window.remotion_inputProps = "{}";</script>
+		<script>window.remotion_initialRenderQueue = [];</script>
+		<script>window.remotion_initialClientRenders = [];</script>
+		<script>window.process = {env: {"REMOTION_EDITOR":"vscode"}};</script>
+		
+		<script>window.remotion_isStudio = true;</script>
+		<script>window.remotion_isReadOnlyStudio = false;</script>
+		<script>window.remotion_staticFiles = []</script>
+		<script>window.remotion_installedPackages = ["@remotion/google-fonts","@remotion/tailwind-v4","@remotion/transitions"]</script>
+		<script>window.remotion_packageManager = "npm"</script>
+		<script>window.remotion_publicFolderExists = "C:\\Users\\user\\movie_01\\public";</script>
+		<script>
+				window.siteVersion = '11';
+				window.remotion_version = '4.0.435';
+		</script>
+		
+		<div id="video-container"></div>
+		<div id="__remotion-studio-container"><div style="margin: auto;"><div style="background-color: rgb(31, 36, 40); display: flex; width: 100%; height: 100%; flex-direction: column; position: absolute;"><div style="display: flex; flex-direction: column; flex: 1 1 0%; height: 0px;"><div class="css-reset" style="align-items: center; flex-direction: row; display: flex; color: white; border-bottom: 1px solid black; font-size: 13px; padding-left: 6px; padding-right: 10px; background-color: rgb(31, 36, 40); justify-content: flex-start;"><div style="min-width: 330px; display: flex; align-items: center; justify-content: flex-start;"><button role="button" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="font-size: 13px; color: white; padding: 8px 10px; cursor: default; user-select: none; border: none; background-color: transparent;"><div style="display: flex; flex-direction: row; justify-content: center; align-items: center;"><svg width="16" height="16" viewBox="-100 -100 400 400" style="transform: rotate(90deg);"><path fill="#fff" stroke="#fff" stroke-width="100" stroke-linejoin="round" d="M 2 172 a 196 100 0 0 0 195 5 A 196 240 0 0 0 100 2.259 A 196 240 0 0 0 2 172 z"></path></svg></div></button><button role="button" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="font-size: 13px; color: white; padding: 8px 10px; cursor: default; user-select: none; border: none; background-color: transparent;">File</button><button role="button" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="font-size: 13px; color: white; padding: 8px 10px; cursor: default; user-select: none; border: none; background-color: transparent;">View</button><button role="button" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="font-size: 13px; color: white; padding: 8px 10px; cursor: default; user-select: none; border: none; background-color: transparent;">Tools</button><button role="button" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="font-size: 13px; color: white; padding: 8px 10px; cursor: default; user-select: none; border: none; background-color: transparent;">Packages</button><button role="button" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="font-size: 13px; color: white; padding: 8px 10px; cursor: default; user-select: none; border: none; background-color: transparent;">Help</button></div><div style="flex: 1 1 0%;"></div><div title="C:\Users\user\movie_01" style="font-size: 13px; opacity: 0.8; display: flex; align-items: center; justify-content: center;"><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><div style="position: relative; width: 14px; margin-top: 4px;"><style type="text/css">
+				@keyframes __remotion_spinner_animation {
+          0% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0.15;
+          }
+        }
+        
+        .__remotion_spinner_line {
+            animation: __remotion_spinner_animation 0.5s linear infinite;
+        }        
+			</style><svg viewBox="0 0 100 100" style="width: 14px; height: 14px;"><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 0rad; transform-origin: center center; animation-delay: -0.5s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 0.785398rad; transform-origin: center center; animation-delay: -0.4375s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 1.5708rad; transform-origin: center center; animation-delay: -0.375s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 2.35619rad; transform-origin: center center; animation-delay: -0.3125s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 3.14159rad; transform-origin: center center; animation-delay: -0.25s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 3.92699rad; transform-origin: center center; animation-delay: -0.1875s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 4.71239rad; transform-origin: center center; animation-delay: -0.125s;"></path><path class="__remotion_spinner_line" d="M 44 0 L 50 0 a 6 6 0 0 1 6 6 L 56 26 a 6 6 0 0 1 -6 6 L 50 32 a 6 6 0 0 1 -6 -6 L 44 6 a 6 6 0 0 1 6 -6 Z" fill="#A6A7A9" style="rotate: 5.49779rad; transform-origin: center center; animation-delay: -0.0625s;"></path></svg></div><div style="display: inline-block; width: 4px; height: 0px; flex-shrink: 0;"></div>movie_01<div style="display: inline-block; width: 2px; height: 0px; flex-shrink: 0;"></div><button title="Open in C:\WINDOWS\notepad.exe" type="button" style="border: none; height: 20px; display: flex; padding-inline: 6px; justify-content: center; align-items: center;"><svg viewBox="0 0 512 512" style="width: 11px; height: 11px;"><path fill="#A6A7A9" d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"></path></svg></button></div><div style="flex: 1 1 0%;"></div><div style="width: 330px; display: flex; align-items: center; justify-content: flex-end;"><button type="button" tabindex="0" style="border: none; background: transparent; height: 24px; width: 24px; display: inline-flex; justify-content: center; align-items: center; border-radius: 3px; pointer-events: auto;"><div title="Toggle Left Sidebar (Ctrl+B)" style="width: 16px; height: 16px; min-width: 16px; border: 1px solid currentcolor; border-radius: 3px; color: rgb(166, 167, 169); position: relative;"><div style="width: 35%; height: 100%; border-right: 1px solid rgb(166, 167, 169); background: rgb(166, 167, 169);"></div></div></button><button type="button" tabindex="0" style="border: none; background: transparent; height: 24px; width: 24px; display: inline-flex; justify-content: center; align-items: center; border-radius: 3px; pointer-events: auto;"><div title="Toggle Right Sidebar (Ctrl+J)" style="width: 16px; height: 16px; min-width: 16px; border: 1px solid currentcolor; border-radius: 3px; color: rgb(166, 167, 169); position: relative;"><div style="width: 35%; height: 100%; right: 0px; position: absolute; border-left: 1px solid rgb(166, 167, 169); background: transparent;"></div></div></button></div><div style="display: inline-block; width: 8px; height: 0px; flex-shrink: 0;"></div></div><div style="display: flex; flex-direction: column; flex: 1 1 0%; height: 0px;"><div style="flex: 750 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div style="height: 100%; width: 100%; display: flex; flex-direction: column; flex: 1 1 0%;"><div style="display: flex; flex-direction: row; flex: 1 1 0%; min-height: 0px;"><div style="display: flex; flex-direction: row; flex: 1 1 0%; height: 100%; width: 100%;"><div style="flex: 200 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div class="css-reset" style="height: 100%; width: 100%; max-width: 100%; display: flex; flex-direction: column; flex: 1 1 0%;"><div style="background-color: rgb(31, 36, 40);"><div style="display: flex; flex-direction: row;"><div role="button" tabindex="0" style="border-top: 2px solid rgb(11, 132, 243); border-right: none; border-bottom: none; border-left: none; border-image: initial; flex: 1 1 0%; padding: 4px 4px 4px 16px; height: 40px; display: flex; flex-direction: row; font-size: 14px; color: white; align-items: center; cursor: default; user-select: none; background-color: rgb(31, 36, 40); box-shadow: none;">Compositions</div><div role="button" tabindex="0" style="border-top: 2px solid transparent; border-right: none; border-bottom: none; border-left: none; border-image: initial; flex: 1 1 0%; padding: 4px 4px 4px 16px; height: 40px; display: flex; flex-direction: row; font-size: 14px; color: rgb(166, 167, 169); align-items: center; cursor: default; user-select: none; background-color: rgb(47, 54, 61);">Assets</div></div></div><div style="display: flex; flex-direction: column; flex: 1 1 0%; overflow: hidden; background-color: rgb(31, 36, 40);"><div style="height: 64px; display: block; padding: 6px 12px; color: white; background-color: rgb(31, 36, 40);"><div style="display: flex; flex-direction: row; line-height: 18px; background-color: rgb(31, 36, 40);"><div><div style="font-weight: bold; font-size: 12px; white-space: nowrap; line-height: 18px; background-color: rgb(31, 36, 40);">LiverVideo</div><div style="font-size: 12px; opacity: 0.8; white-space: nowrap; line-height: 18px; background-color: rgb(31, 36, 40);">1920x1080, 30 FPS</div><div style="font-size: 12px; opacity: 0.8; white-space: nowrap; line-height: 18px; background-color: rgb(31, 36, 40);">Duration 04:55.15</div></div></div></div><div style="padding: 4px 12px; border-bottom: 1px solid rgb(0, 0, 0);"><button type="button" tabindex="0" style="background-color: rgba(255, 255, 255, 0.06); border-radius: 5px; padding: 4px 10px; color: rgb(166, 167, 169); font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; border: none; width: 100%; appearance: none;">Search...<span style="font-size: 11px; opacity: 0.6;">Ctrl+K</span></button></div><div class="__remotion-vertical-scrollbar" style="height: calc(100% - 102px); overflow-y: auto;"><div><div style="display: flex; flex-direction: row; justify-content: flex-start; align-items: center;"><a tabindex="0" type="button" title="LiverVideo" class="__remotion-composition" data-compname="LiverVideo" style="padding: 6px 10px 6px 12px; font-size: 13px; display: flex; text-decoration: none; cursor: default; align-items: center; margin-bottom: 1px; appearance: none; border: none; width: 100%; text-align: left; background-color: rgba(255, 255, 255, 0.15); height: 32px; user-select: none;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 18px; height: 18px; flex-shrink: 0;"><path fill="white" d="M448 32H64C28.65 32 0 60.65 0 96v320c0 35.35 28.65 64 64 64h384c35.35 0 64-28.65 64-64V96C512 60.65 483.3 32 448 32zM384 64v176H128V64H384zM32 96c0-17.64 14.36-32 32-32h32v80H32V96zM32 176h64v64H32V176zM32 272h64v64H32V272zM64 448c-17.64 0-32-14.36-32-32v-48h64V448H64zM128 448V272h256V448H128zM480 416c0 17.64-14.36 32-32 32h-32v-80h64V416zM480 336h-64v-64h64V336zM480 240h-64v-64h64V240zM480 144h-64V64h32c17.64 0 32 14.36 32 32V144z"></path></svg><div style="display: inline-block; width: 8px; height: 0px; flex-shrink: 0;"></div><div style="text-align: left; text-decoration: none; font-size: 13px; flex: 1 1 0%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white;">LiverVideo</div><div style="display: inline-block; width: 4px; height: 0px; flex-shrink: 0;"></div></a></div></div></div></div></div></div><div style="position: absolute; left: 0%; width: 20%; background-color: rgb(218, 0, 37);"></div><div class="remotion-splitter remotion-splitter-vertical" style="width: 3px;"></div><div style="flex: 800 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div style="display: flex; flex-direction: row; flex: 1 1 0%; height: 100%; width: 100%;"><div style="flex: 700 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div style="flex: 1 1 0%; display: flex; padding-top: 0px; padding-left: 0px;"> <div style="flex: 1 1 0%; display: flex; overflow: hidden; position: relative; background-color: rgb(31, 36, 40);"><div style="width: 807.778px; height: 454.375px; display: flex; flex-direction: column; position: absolute; left: 106.908px; top: 0px; overflow: hidden; justify-content: flex-start; align-items: normal;"><div style="transform: scale(0.420718); margin-left: -556.111px; margin-top: -312.812px; width: 1920px; height: 1080px; display: flex; position: absolute; background-color: white; background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%), linear-gradient(135deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%), linear-gradient(135deg, transparent 75%, rgba(0, 0, 0, 0.1) 75%); background-size: 49px 49px; background-position: 0px 0px, 24.5px 0px, 24.5px -24.5px, 0px 24.5px;"><div style="position: absolute; inset: 0px; width: 100%; height: 100%; display: flex; flex-direction: column;"><div style="position: absolute; inset: 0px; width: 100%; height: 100%; display: flex; flex-direction: column; background-color: rgb(15, 15, 26);"><div style="position: absolute; inset: 0px; width: 100%; height: 100%; display: flex;"><div style="position: absolute; inset: 0px; width: 100%; height: 100%; display: flex;"><div style="position: absolute; inset: 0px; width: 100%; height: 100%; display: flex; flex-direction: column; opacity: 1;"><div style="position: absolute; inset: 0px; width: 100%; height: 100%; display: flex; flex-direction: column; background: linear-gradient(135deg, rgb(26, 26, 46) 0%, rgb(22, 33, 62) 50%, rgb(15, 15, 26) 100%); font-family: &quot;Noto Sans JP&quot;, sans-serif; justify-content: center; align-items: center;"><div style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; overflow: hidden; pointer-events: none;"><div style="position: absolute; left: 0%; top: -5%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.1125;"></div><div style="position: absolute; left: 38.4589%; top: 68.1%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.217464;"></div><div style="position: absolute; left: 76.6829%; top: 41.2%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.336129;"></div><div style="position: absolute; left: 14.495%; top: 14.3%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.149906;"></div><div style="position: absolute; left: 51.8186%; top: 87.4%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.244331;"></div><div style="position: absolute; left: 88.6969%; top: 60.5%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.314866;"></div><div style="position: absolute; left: 25.2822%; top: 33.6%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.117792;"></div><div style="position: absolute; left: 61.7984%; top: 6.7%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.165576;"></div><div style="position: absolute; left: -1.5136%; top: 79.8%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.19628;"></div><div style="position: absolute; left: 35.5449%; top: 52.9%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.0758426;"></div><div style="position: absolute; left: 73.0822%; top: 26%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.127567;"></div><div style="position: absolute; left: 11.0889%; top: -0.9%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.200765;"></div><div style="position: absolute; left: 49.4412%; top: 72.2%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.102022;"></div><div style="position: absolute; left: 87.9302%; top: 45.3%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.200945;"></div><div style="position: absolute; left: 26.314%; top: 18.4%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.319986;"></div><div style="position: absolute; left: 64.376%; top: 91.5%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.147675;"></div><div style="position: absolute; left: 1.97872%; top: 64.6%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.249335;"></div><div style="position: absolute; left: 39.097%; top: 37.7%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.332368;"></div><div style="position: absolute; left: 75.8242%; top: 10.8%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.127954;"></div><div style="position: absolute; left: 12.3497%; top: 83.9%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.182803;"></div><div style="position: absolute; left: 48.912%; top: 57%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.214898;"></div><div style="position: absolute; left: 85.7406%; top: 30.1%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.0795114;"></div><div style="position: absolute; left: 23%; top: 3.2%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.125001;"></div><div style="position: absolute; left: 60.7491%; top: 76.3%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.185898;"></div><div style="position: absolute; left: -1.07315%; top: 49.4%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.0923785;"></div><div style="position: absolute; left: 37.3674%; top: 22.5%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.183355;"></div><div style="position: absolute; left: 75.8403%; top: -4.4%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.299265;"></div><div style="position: absolute; left: 14.1076%; top: 68.7%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.142642;"></div><div style="position: absolute; left: 51.9812%; top: 41.8%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.249413;"></div><div style="position: absolute; left: 89.3698%; top: 14.9%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.344303;"></div><div style="position: absolute; left: 26.3006%; top: 88%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.136886;"></div><div style="position: absolute; left: 62.9129%; top: 61.1%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.200404;"></div><div style="position: absolute; left: -0.575807%; top: 34.2%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.237308;"></div><div style="position: absolute; left: 36.0764%; top: 7.3%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.085808;"></div><div style="position: absolute; left: 73.0772%; top: 80.4%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.127413;"></div><div style="position: absolute; left: 10.5487%; top: 53.5%; width: 2px; height: 2px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.177133;"></div><div style="position: absolute; left: 48.498%; top: 26.6%; width: 3.5px; height: 3.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.084338;"></div><div style="position: absolute; left: 86.815%; top: -0.3%; width: 5px; height: 5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.166095;"></div><div style="position: absolute; left: 25.2998%; top: 72.8%; width: 6.5px; height: 6.5px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.275614;"></div><div style="position: absolute; left: 63.7111%; top: 45.9%; width: 8px; height: 8px; border-radius: 50%; background-color: rgb(233, 69, 96); opacity: 0.135208;"></div></div><div style="font-size: 72px; transform: scale(0); margin-bottom: 20px;">🎙️</div><div style="font-size: 72px; font-weight: 900; color: rgb(240, 240, 240); opacity: 0; transform: scale(0.8); text-align: center; letter-spacing: 4px;">ライバーの役割と全体像</div><div style="font-size: 28px; color: rgb(160, 160, 176); opacity: 0; transform: translateY(20px); margin-top: 24px; letter-spacing: 2px;">〜 "売上を作るMC" になるための第一歩 〜</div><div style="position: absolute; bottom: 60px; width: 0px; height: 3px; background: linear-gradient(90deg, transparent, rgb(233, 69, 96), transparent);"></div></div></div></div></div></div></div></div></div></div></div></div><div style="position: absolute; left: 0%; width: 70%; background-color: rgb(80, 0, 175);"></div></div></div><div style="position: absolute; left: 20%; width: 80%; background-color: rgb(218, 0, 37);"></div></div></div><div class="css-reset" style="display: flex; justify-content: center; border-top: 1px solid rgba(0, 0, 0, 0.5); padding-top: 2px; padding-bottom: 2px; align-items: center; flex-direction: row; background: rgb(31, 36, 40); height: 56px;"><div style="position: fixed; display: none; top: 0px; left: 0px; width: 40px; height: 100%; pointer-events: none; background: linear-gradient(to right, rgb(31, 36, 40), rgba(31, 36, 40, 0));"></div><div style="width: 300px; height: 38px; display: flex; flex-direction: row; align-items: center;"><div style="width: 16px;"></div><div style="color: black; flex-direction: row; display: flex; align-items: center;"><button type="button" tabindex="0" title="Zoom out timeline" role="ControlButton" disabled="" style="opacity: 0.5; display: inline-flex; background: none; border: none; padding: 6px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="color: white; width: 14px;"><path fill="currentColor" d="M400 288h-352c-17.69 0-32-14.32-32-32.01s14.31-31.99 32-31.99h352c17.69 0 32 14.3 32 31.99S417.7 288 400 288z"></path></svg></button><div style="display: inline-block; width: 4px; height: 0px; flex-shrink: 0;"></div><input title="Timeline zoom (1x)" alt="Timeline zoom (1x)" min="1" step="0.1" max="5" class="__remotion-timeline-slider" tabindex="0" type="range" value="1"><div style="display: inline-block; width: 4px; height: 0px; flex-shrink: 0;"></div><button type="button" tabindex="0" title="Zoom in timeline" role="button" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="color: white; width: 14px;"><path fill="currentcolor" d="M432 256c0 17.69-14.33 32.01-32 32.01H256v144c0 17.69-14.33 31.99-32 31.99s-32-14.3-32-31.99v-144H48c-17.67 0-32-14.32-32-32.01s14.33-31.99 32-31.99H192v-144c0-17.69 14.33-32.01 32-32.01s32 14.32 32 32.01v144h144C417.7 224 432 238.3 432 256z"></path></svg></button></div></div><div style="flex: 1 1 0%;"></div><div aria-label="Preview Size" style="padding: 6px;"><button title="Preview Size" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="padding: 8px 10px; display: inline-flex; background-color: rgb(47, 54, 61); border-width: 1px; border-style: solid; max-width: 100%; width: 80px; user-select: none; color: white; flex-direction: row; align-items: center; border-color: rgba(0, 0, 0, 0.6);"><div title="Fit" style="flex: 1 1 0%; overflow: hidden; text-overflow: ellipsis; font-size: 14px; text-align: left;">Fit</div><div style="display: inline-block; width: 8px; height: 0px; flex-shrink: 0;"></div> <svg viewBox="0 0 320 512" style="width: 10px;"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path></svg></button></div><div aria-label="Change the playback rate" style="padding: 6px;"><button title="Change the playback rate" tabindex="0" type="button" class="__remotion-studio-menu-initiator" style="padding: 8px 10px; display: inline-flex; background-color: rgb(47, 54, 61); border-width: 1px; border-style: solid; max-width: 100%; width: 80px; user-select: none; color: white; flex-direction: row; align-items: center; border-color: rgba(0, 0, 0, 0.6);"><div title="1x" style="flex: 1 1 0%; overflow: hidden; text-overflow: ellipsis; font-size: 14px; text-align: left;">1x</div><div style="display: inline-block; width: 8px; height: 0px; flex-shrink: 0;"></div> <svg viewBox="0 0 320 512" style="width: 10px;"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path></svg></button></div><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><button type="button" tabindex="0" aria-label="Jump to beginning" title="Jump to beginning" disabled="" style="opacity: 0.5; display: inline-flex; background: none; border: none; padding: 6px;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 18px; color: white;"><path fill="currentColor" d="M0 415.1V96.03c0-17.67 14.33-31.1 31.1-31.1C49.67 64.03 64 78.36 64 96.03v131.8l171.5-156.5C256.1 54.28 288 68.66 288 96.03v131.9l171.5-156.5C480.1 54.28 512 68.66 512 96.03v319.9c0 27.37-31.88 41.74-52.5 24.62L288 285.2v130.7c0 27.37-31.88 41.74-52.5 24.62L64 285.2v130.7c0 17.67-14.33 31.1-31.1 31.1C14.33 447.1 0 433.6 0 415.1z"></path></svg></button><button type="button" tabindex="0" aria-label="Step back one frame" title="Step back one frame" disabled="" style="opacity: 0.5; display: inline-flex; background: none; border: none; padding: 6px;"><svg viewBox="0 0 448 512" style="height: 16px; color: white;"><path fill="currentColor" d="M64 468V44c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12v176.4l195.5-181C352.1 22.3 384 36.6 384 64v384c0 27.4-31.9 41.7-52.5 24.6L136 292.7V468c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12z"></path></svg></button><button type="button" tabindex="0" aria-label="Play" title="Play" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="play" class="svg-inline--fa fa-play fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="height: 14px; width: 14px; color: white;"><path fill="currentColor" d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path></svg></button><button type="button" tabindex="0" aria-label="Step forward one frame" title="Step forward one frame" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg viewBox="0 0 448 512" style="height: 16px; color: white;"><path fill="currentColor" d="M384 44v424c0 6.6-5.4 12-12 12h-48c-6.6 0-12-5.4-12-12V291.6l-195.5 181C95.9 489.7 64 475.4 64 448V64c0-27.4 31.9-41.7 52.5-24.6L312 219.3V44c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12z"></path></svg></button><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><button type="button" tabindex="0" title="Loop video" aria-label="Loop video" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg viewBox="0 0 512 512" style="width: 18px; height: 18px;"><path fill="#0b84f3" d="M493.544 181.463c11.956 22.605 18.655 48.4 18.452 75.75C511.339 345.365 438.56 416 350.404 416H192v47.495c0 22.475-26.177 32.268-40.971 17.475l-80-80c-9.372-9.373-9.372-24.569 0-33.941l80-80C166.138 271.92 192 282.686 192 304v48h158.875c52.812 0 96.575-42.182 97.12-94.992.155-15.045-3.17-29.312-9.218-42.046-4.362-9.185-2.421-20.124 4.8-27.284 4.745-4.706 8.641-8.555 11.876-11.786 11.368-11.352 30.579-8.631 38.091 5.571zM64.005 254.992c.545-52.81 44.308-94.992 97.12-94.992H320v47.505c0 22.374 26.121 32.312 40.971 17.465l80-80c9.372-9.373 9.372-24.569 0-33.941l-80-80C346.014 16.077 320 26.256 320 48.545V96H161.596C73.44 96 .661 166.635.005 254.788c-.204 27.35 6.495 53.145 18.452 75.75 7.512 14.202 26.723 16.923 38.091 5.57 3.235-3.231 7.13-7.08 11.876-11.786 7.22-7.16 9.162-18.098 4.8-27.284-6.049-12.735-9.374-27.001-9.219-42.046z"></path></svg></button><button type="button" tabindex="0" title="Mute video" aria-label="Mute video" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M3 10v4c0 .55.45 1 1 1h3l3.29 3.29c.63.63 1.71.18 1.71-.71V6.41c0-.89-1.08-1.34-1.71-.71L7 9H4c-.55 0-1 .45-1 1zm13.5 2A4.5 4.5 0 0014 7.97v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 4.45v.2c0 .38.25.71.6.85C17.18 6.53 19 9.06 19 12s-1.82 5.47-4.4 6.5c-.36.14-.6.47-.6.85v.2c0 .63.63 1.07 1.21.85C18.6 19.11 21 15.84 21 12s-2.4-7.11-5.79-8.4c-.58-.23-1.21.22-1.21.85z" fill="#fff"></path></svg></button><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><button type="button" tabindex="0" title="Mark In (I) - right click to clear" aria-label="Mark In (I) - right click to clear" disabled="" style="opacity: 0.5; display: inline-flex; background: none; border: none; padding: 6px;"><svg viewBox="0 0 256 256" fill="none" color="white" style="width: 16px; height: 16px;"><path d="M158 25H99V230.5H158" stroke="white" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"></path></svg></button><button type="button" tabindex="0" title="Mark Out (O) - right click to clear" aria-label="Mark Out (O) - right click to clear" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg viewBox="0 0 256 256" fill="none" color="white" style="width: 16px; height: 16px;"><path d="M98 25H157V230.5H98" stroke="white" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"></path></svg></button><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><button type="button" tabindex="0" title="Show transparency as checkerboard (T)" aria-label="Show transparency as checkerboard (T)" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="game-board-alt" class="svg-inline--fa fa-game-board-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 16px; height: 16px;"><path fill="#0b84f3" d="M480 0H32A32 32 0 0 0 0 32v448a32 32 0 0 0 32 32h448a32 32 0 0 0 32-32V32a32 32 0 0 0-32-32zm-32 256H256v192H64V256h192V64h192z"></path></svg></button><div style="display: inline-block; width: 8px; height: 0px; flex-shrink: 0;"></div><button type="button" tabindex="0" title="Enter fullscreen preview (F)" aria-label="Enter fullscreen preview (F)" style="opacity: 1; display: inline-flex; background: none; border: none; padding: 6px;"><svg viewBox="0 0 448 512" fill="#fff" style="width: 18px; height: 18px;"><path d="M0 180V56c0-13.3 10.7-24 24-24h124c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H64v84c0 6.6-5.4 12-12 12H12c-6.6 0-12-5.4-12-12zM288 44v40c0 6.6 5.4 12 12 12h84v84c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12V56c0-13.3-10.7-24-24-24H300c-6.6 0-12 5.4-12 12zm148 276h-40c-6.6 0-12 5.4-12 12v84h-84c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h124c13.3 0 24-10.7 24-24V332c0-6.6-5.4-12-12-12zM160 468v-40c0-6.6-5.4-12-12-12H64v-84c0-6.6-5.4-12-12-12H12c-6.6 0-12 5.4-12 12v124c0 13.3 10.7 24 24 24h124c6.6 0 12-5.4 12-12z"></path></svg></button><div style="flex: 1 1 0%;"></div><div style="width: 300px; height: 38px; display: flex; flex-direction: row; align-items: center;"><div style="flex: 1 1 0%;"></div><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><button id="render-modal-button-server" type="button" style="display: none;"></button> <button id="render-modal-button-client" type="button" style="display: none;"></button><div title="Export the current composition (R)" style="display: inline-flex; flex-direction: row; align-items: stretch; border-radius: 4px; border: 1px solid rgba(0, 0, 0, 0.6); background-color: rgb(47, 54, 61); overflow: hidden; opacity: 1; cursor: pointer;"><button type="button" id="render-modal-button" style="padding: 7px; background: transparent; border: none; color: white; cursor: pointer; display: flex; align-items: center; font-size: 14px; font-family: inherit;"><div style="padding-left: 4px; padding-right: 6px; display: flex; flex-direction: row; justify-content: flex-start; align-items: center;"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 16px; color: currentcolor;"><path fill="currentcolor" d="M188.9 372l-50.4-50.4c18.6-42.6 61.7-137.7 95.1-187C304.6 30.1 409 24.6 475.7 36.3c11.7 66.7 6.2 171.1-98.4 242c-49.4 33.5-145.5 75.6-188.4 93.7zm-79.9-62.8c-5.2 11.9-2.5 25.7 6.7 34.9l50.7 50.7c9.1 9.1 22.7 11.9 34.5 6.9c6.5-2.7 14.3-6 23-9.8L224 496c0 5.5 2.9 10.7 7.6 13.6s10.6 3.2 15.6 .7l101.5-50.7c21.7-10.8 35.4-33 35.4-57.2V312.1c4-2.5 7.7-4.9 11.3-7.3C516.1 222.9 520.1 100.9 506.7 28.1c-2.1-11.6-11.2-20.6-22.8-22.8C411.1-8.1 289.1-4.1 207.2 116.7c-2.4 3.6-4.9 7.3-7.3 11.3l-90.2 0c-24.2 0-46.4 13.7-57.2 35.4L1.7 264.8c-2.5 5-2.2 10.8 .7 15.6s8.1 7.6 13.6 7.6H118.5c-3.6 8-6.8 15.2-9.4 21.2zM256 470.1l0-92.5c30.3-13.7 65.4-30.3 96-47v71.7c0 12.1-6.8 23.2-17.7 28.6L256 470.1zM109.7 160h71.5c-16.9 30.7-34 65.8-48.1 96H41.9L81 177.7c5.4-10.8 16.5-17.7 28.6-17.7zM392 144a24 24 0 1 1 -48 0 24 24 0 1 1 48 0zM368 88a56 56 0 1 0 0 112 56 56 0 1 0 0-112z"></path></svg><div style="display: inline-block; width: 8px; height: 0px; flex-shrink: 0;"></div><span style="font-size: 14px;">Render</span></div></button></div><div style="display: inline-block; width: 12px; height: 0px; flex-shrink: 0;"></div></div><div style="position: fixed; display: none; top: 0px; right: 0px; width: 40px; height: 100%; pointer-events: none; background: linear-gradient(to left, rgb(31, 36, 40), rgba(31, 36, 40, 0));"></div></div></div></div><div style="position: absolute; left: 0%; width: 75%; background-color: rgb(114, 0, 141);"></div><div class="remotion-splitter remotion-splitter-horizontal" style="height: 3px;"></div><div style="flex: 250 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div class="css-reset __remotion-vertical-scrollbar" style="min-height: 100%; flex: 1 1 0%; display: flex; height: 0px; overflow-y: auto; background-color: rgb(31, 36, 40);"><div style="height: 326px; display: flex; flex: 1 1 0%; min-height: 100%; overflow-x: hidden;"><div style="display: flex; flex-direction: row; flex: 1 1 0%; height: 100%; width: 100%;"><div style="flex: 200 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div style="flex: 1 1 0%; background: rgb(31, 36, 40);"><div style="height: 39px;"></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 0px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:68" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TransitionSeries&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:68</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div><div><div style="height: 26px; color: white; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: row; align-items: center; word-break: break-all; text-align: left; padding-left: 5px; border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="height: 16px; width: 16px; border-radius: 2px; background-color: rgba(0, 0, 0, 0.4); display: inline-flex; justify-content: center; align-items: center; margin-right: 6px; flex-shrink: 0;"><svg viewBox="0 0 24 16" fill="none" style="width: 12px; color: currentcolor; pointer-events: none;"><path d="M24 7.551C24 7.551 19.748 16 12.015 16C4.835 16 0 7.551 0 7.551C0 7.551 4.446 0 12.015 0C19.709 0 24 7.551 24 7.551ZM17 8C17 5.243 14.757 3 12 3C9.243 3 7 5.243 7 8C7 10.757 9.243 13 12 13C14.757 13 17 10.757 17 8Z" fill="#ddd"></path></svg></div><div style="width: 15px; flex-shrink: 0;"></div><div style="width: 5px; flex-shrink: 0;"></div><div title="LiverVideo.tsx:50" style="font-size: 12px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; line-height: 1.2; color: rgb(221, 221, 221); user-select: none; border-bottom: none;">&lt;TS.Sequence&gt;</div><div style="font-size: 12px; color: rgba(255, 255, 255, 0.3); margin-left: 10px; cursor: pointer; display: flex; flex-direction: row; align-items: center; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; flex-shrink: 100000;">LiverVideo.tsx:50</div></div></div></div></div><div style="position: absolute; left: 0%; width: 20%; background-color: rgb(218, 0, 37);"><div style="height: 39px; position: absolute; top: 0px; width: 100%; padding-left: 10px; display: flex; align-items: center; background-color: rgb(31, 36, 40); border-bottom: 1px solid rgba(0, 0, 0, 0.3);"><div style="color: white; display: flex; flex-direction: row; align-items: center; font-variant-numeric: tabular-nums; line-height: 1; width: 100%;"><div style="display: inline-block; font-size: 16px; line-height: 1; font-family: monospace;">00:00.00</div><div style="display: inline-block; width: 16px; height: 0px; flex-shrink: 0;"></div><div style="flex: 1 1 0%;"></div><button type="button" class="__remotion_input_dragger" style="padding: 4px 6px; color: white; border-style: solid; border-width: 1px; font-size: 14px; background-color: transparent; border-color: transparent; outline: none;"><span style="color: rgb(11, 132, 243); cursor: ew-resize; user-select: none; font-size: 14px; font-variant-numeric: tabular-nums;">0</span></button></div></div></div><div class="remotion-splitter remotion-splitter-vertical" style="width: 3px;"></div><div style="flex: 800 1 0%; display: flex; position: relative; overflow: hidden; flex-direction: column;"><div class="__remotion-horizontal-scrollbar" style="width: 100%; height: 100%; overflow: auto hidden; position: relative; background-color: rgb(17, 17, 17);"><div style="width: 100%; min-height: 100%;"><div style="min-height: 100%; width: 100%;"><div style="padding-left: 16px; padding-right: 16px; padding-top: 1px;"><div style="height: 39px;"></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TransitionSeries&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 0px; width: 988.594px; color: white; overflow: hidden; opacity: 1;"><div style="padding-left: 5px; height: 100%; display: flex; align-items: center;"><div style="font-size: 11px; font-family: Arial, Helvetica, sans-serif; color: white; opacity: 0.5; white-space: nowrap;">0</div></div></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 0px; width: 49.1272px; color: white; overflow: hidden; opacity: 1;"><div style="padding-left: 5px; height: 100%; display: flex; align-items: center;"><div style="font-size: 11px; font-family: Arial, Helvetica, sans-serif; color: white; opacity: 0.5; white-space: nowrap;">0</div></div></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 48.5642px; width: 82.6198px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 130.621px; width: 82.6198px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 212.678px; width: 99.3661px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 311.481px; width: 99.3661px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 410.284px; width: 132.859px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 542.58px; width: 132.859px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 674.875px; width: 99.3661px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 773.678px; width: 132.859px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div><div><div style="height: 25px; margin-bottom: 1px;"><div title="&lt;TS.Sequence&gt;" style="background: rgb(11, 132, 243); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 2px; position: absolute; height: 25px; margin-left: 905.974px; width: 82.6198px; color: white; overflow: hidden; opacity: 0.5;"></div></div></div></div></div><div style="user-select: none; position: absolute; height: 100%; top: 0px; width: 100%;"><div style="width: 100%; height: 100%; user-select: none;"><div class="__remotion-vertical-scrollbar" style="overflow: hidden auto;"></div></div></div><div style="height: 35px; box-shadow: rgb(17, 17, 17) 0px 0px 4px; position: absolute; background-color: rgb(17, 17, 17); top: 0px; width: 1020.09px; overflow: hidden; margin-left: 1.5px; pointer-events: none;"><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 14.5px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 165.217px;"><div style="font-size: 12px; margin-left: 8px; margin-top: 7px; color: rgb(166, 167, 169);">00:45.00</div></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 315.933px;"><div style="font-size: 12px; margin-left: 8px; margin-top: 7px; color: rgb(166, 167, 169);">01:30.00</div></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 466.65px;"><div style="font-size: 12px; margin-left: 8px; margin-top: 7px; color: rgb(166, 167, 169);">02:15.00</div></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 617.366px;"><div style="font-size: 12px; margin-left: 8px; margin-top: 7px; color: rgb(166, 167, 169);">03:00.00</div></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 768.083px;"><div style="font-size: 12px; margin-left: 8px; margin-top: 7px; color: rgb(166, 167, 169);">03:45.00</div></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 15px; position: absolute; left: 918.799px;"><div style="font-size: 12px; margin-left: 8px; margin-top: 7px; color: rgb(166, 167, 169);">04:30.00</div></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 19.5239px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 24.5478px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 29.5717px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 34.5955px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 39.6194px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 44.6433px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 49.6672px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 54.6911px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 59.715px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 64.7389px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 69.7627px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 74.7866px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 79.8105px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 84.8344px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 89.8583px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 94.8822px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 99.906px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 104.93px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 109.954px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 114.978px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 120.002px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 125.025px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 130.049px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 135.073px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 140.097px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 145.121px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 150.145px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 155.169px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 160.193px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 170.24px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 175.264px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 180.288px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 185.312px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 190.336px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 195.36px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 200.384px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 205.408px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 210.432px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 215.455px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 220.479px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 225.503px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 230.527px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 235.551px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 240.575px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 245.599px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 250.623px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 255.646px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 260.67px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 265.694px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 270.718px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 275.742px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 280.766px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 285.79px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 290.814px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 295.838px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 300.861px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 305.885px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 310.909px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 320.957px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 325.981px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 331.005px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 336.029px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 341.053px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 346.076px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 351.1px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 356.124px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 361.148px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 366.172px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 371.196px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 376.22px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 381.244px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 386.268px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 391.291px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 396.315px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 401.339px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 406.363px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 411.387px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 416.411px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 421.435px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 426.459px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 431.482px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 436.506px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 441.53px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 446.554px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 451.578px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 456.602px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 461.626px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 471.674px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 476.697px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 481.721px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 486.745px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 491.769px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 496.793px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 501.817px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 506.841px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 511.865px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 516.889px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 521.912px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 526.936px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 531.96px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 536.984px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 542.008px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 547.032px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 552.056px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 557.08px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 562.103px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 567.127px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 572.151px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 577.175px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 582.199px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 587.223px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 592.247px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 597.271px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 602.295px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 607.318px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 612.342px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 622.39px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 627.414px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 632.438px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 637.462px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 642.486px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 647.51px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 652.533px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 657.557px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 662.581px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 667.605px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 672.629px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 677.653px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 682.677px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 687.701px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 692.725px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 697.748px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 702.772px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 707.796px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 712.82px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 717.844px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 722.868px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 727.892px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 732.916px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 737.939px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 742.963px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 747.987px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 753.011px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 758.035px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 763.059px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 773.107px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 778.131px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 783.154px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 788.178px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 793.202px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 798.226px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 803.25px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 808.274px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 813.298px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 818.322px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 823.346px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 828.369px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 833.393px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 838.417px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 843.441px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 848.465px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 853.489px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 858.513px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 863.537px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 868.56px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 873.584px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 878.608px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 883.632px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 888.656px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 893.68px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 898.704px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 903.728px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 908.752px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 913.775px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 923.823px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 928.847px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 933.871px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 938.895px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 943.919px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 948.943px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 953.967px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 958.99px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 964.014px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 969.038px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 974.062px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 979.086px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 984.11px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 989.134px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 2px; position: absolute; left: 994.158px;"></div><div style="width: 1px; background-color: rgba(255, 255, 255, 0.15); height: 10px; position: absolute; left: 999.182px;"></div></div><div style="position: absolute; bottom: 0px; top: 0px; pointer-events: none; transform: translateX(16px);"><div style="height: 100vh; width: 1px; position: fixed; background-color: rgb(240, 44, 0);"></div><div style="width: 20px; height: 20px; position: fixed; margin-left: -8px;"><svg width="17" viewBox="0 0 159 212"><path d="M17.0234375,1.07763419 L143.355469,1.07763419 C151.63974,1.07763419 158.355469,7.79336295 158.355469,16.0776342 L158.355469,69.390507 C158.355469,73.7938677 156.420655,77.9748242 153.064021,80.8248415 L89.3980057,134.881757 C83.7986799,139.635978 75.5802263,139.635978 69.9809005,134.881757 L6.66764807,81.1243622 C3.0872392,78.0843437 1.0234375,73.6246568 1.0234375,68.9277387 L1.0234375,17.0776342 C1.0234375,8.2410782 8.1868815,1.07763419 17.0234375,1.07763419 Z" fill="#f02c00"></path></svg></div></div></div></div></div><div style="position: absolute; left: 20%; width: 80%; background-color: rgb(218, 0, 37);"></div></div></div></div></div><div style="position: absolute; left: 75%; width: 25%; background-color: rgb(114, 0, 141);"></div></div></div></div><div style="position: absolute; justify-content: center; align-items: center; display: flex; width: 100%; flex-direction: column; padding-top: 20px; pointer-events: none; background-color: transparent;"></div></div></div>
+		<div id="menuportal-0"></div>
+		<div id="menuportal-1"></div>
+		<div id="menuportal-2"></div>
+		<div id="menuportal-3"></div>
+		<div id="menuportal-4"></div>
+		<div id="menuportal-5"></div>
+		<div id="remotion-error-overlay"></div>
+		<div id="server-disconnected-overlay"></div>
+		<script src="/bundle.js"></script>
+	
+<div style="position: fixed; top: -999999px;"></div></body></html>
