@@ -1,6 +1,7 @@
 // Scene 5: Three Points Overview (1:35~2:05, 30s = 900 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from "remotion";
+import { Audio } from "@remotion/media";
 import { COLORS, FONT_FAMILY } from "./styles";
 import { Particles } from "./Particles";
 

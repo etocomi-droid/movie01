@@ -1,6 +1,7 @@
 // Scene 6: GOOD Example (2:05~2:45, 40s = 1200 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from "remotion";
+import { Audio } from "@remotion/media";
 import { COLORS, FONT_FAMILY } from "./styles";
 import { Particles } from "./Particles";
 

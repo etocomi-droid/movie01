@@ -1,6 +1,7 @@
 // Scene 1: Opening - Title screen (0:00~0:15, 15s = 450 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from "remotion";
+import { Audio } from "@remotion/media";
 import { COLORS, FONT_FAMILY } from "./styles";
 import { Particles } from "./Particles";
 

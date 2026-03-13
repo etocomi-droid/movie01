@@ -1,6 +1,7 @@
 // Scene 3: Premise - Flow Chart (0:40~1:05, 25s = 750 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, staticFile } from "remotion";
+import { Audio } from "@remotion/media";
 import { COLORS, FONT_FAMILY } from "./styles";
 import { Particles } from "./Particles";
 
