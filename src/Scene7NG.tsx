@@ -1,7 +1,8 @@
 // Scene 7: NG Example (2:45~3:25, 40s = 1200 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const ngScript = "今日はこの商品を紹介します。スペックは…";
 
@@ -65,6 +66,8 @@ export const Scene7NG: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene7.mp3")} />
+            <Particles count={15} color={COLORS.ng} />
             {/* Red glow */}
             <div
                 style={{

@@ -1,7 +1,8 @@
 // Scene 4: KPI Metrics (1:05~1:35, 30s = 900 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const kpiItems = [
     { icon: "⏱️", label: "滞在時間", value: "1分+", desc: "視聴者が離脱せず留まる時間" },
@@ -33,6 +34,8 @@ export const Scene4KPI: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene4.mp3")} />
+            <Particles count={10} />
             {/* Header */}
             <div
                 style={{

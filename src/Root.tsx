@@ -3,10 +3,9 @@ import { Composition } from "remotion";
 import { LiverVideo, TOTAL_DURATION_FRAMES } from "./LiverVideo";
 import { loadFont } from "@remotion/google-fonts/NotoSansJP";
 
-// Load Noto Sans JP font (side effect - preloads the font)
+// Load Noto Sans JP font
 loadFont("normal", {
-  weights: ["400", "500", "700", "900"],
-  subsets: ["latin"],
+  weights: ["400", "700"],
 });
 
 export const RemotionRoot: React.FC = () => {

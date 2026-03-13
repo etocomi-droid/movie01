@@ -1,7 +1,8 @@
 // Scene 5: Three Points Overview (1:35~2:05, 30s = 900 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const points = [
     {
@@ -47,6 +48,8 @@ export const Scene5ThreePoints: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene5.mp3")} />
+            <Particles count={15} color={COLORS.accent} />
             {/* Pulse glow */}
             <div
                 style={{

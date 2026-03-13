@@ -24,6 +24,7 @@ for i, match in enumerate(matches, 1):
     cmd = [
         "edge-tts",
         "--voice", "ja-JP-NanamiNeural",
+        "--rate=-15%",
         "--text", text,
         "--write-media", output_file
     ]

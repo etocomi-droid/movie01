@@ -1,7 +1,8 @@
 // Scene 9: Mini Drill (3:55~4:35, 40s = 1200 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const roles = [
     { icon: "🗺️", label: "導線" },
@@ -53,6 +54,8 @@ export const Scene9Drill: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene9.mp3")} />
+            <Particles count={15} color={COLORS.drill} />
             {/* Cyan glow */}
             <div
                 style={{

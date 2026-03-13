@@ -1,7 +1,8 @@
 // Scene 3: Premise - Flow Chart (0:40~1:05, 25s = 750 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const flowItems = [
     { icon: "😟", label: "悩み", sub: "視聴者の課題" },
@@ -37,6 +38,8 @@ export const Scene3Premise: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene3.mp3")} />
+            <Particles count={10} />
             {/* Header */}
             <div
                 style={{

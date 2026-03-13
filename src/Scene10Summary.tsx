@@ -1,6 +1,6 @@
 // Scene 10: Summary + Ending (4:35~5:00, 25s = 750 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
 import { Particles } from "./Particles";
 
@@ -64,6 +64,7 @@ export const Scene10Summary: React.FC = () => {
                 transform: `scale(${zoomOut})`,
             }}
         >
+            <Audio src={staticFile("audio/scene10.mp3")} />
             <Particles count={40} />
 
             {/* Header */}

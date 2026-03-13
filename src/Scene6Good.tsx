@@ -1,7 +1,8 @@
 // Scene 6: GOOD Example (2:05~2:45, 40s = 1200 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const fullScript =
     "今日は◯◯で困ってる人向け。コメントで状況を教えて→あなたに合う選び方を案内します";
@@ -56,6 +57,8 @@ export const Scene6Good: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene6.mp3")} />
+            <Particles count={15} color={COLORS.good} />
             {/* Green glow */}
             <div
                 style={{
@@ -152,7 +155,6 @@ export const Scene6Good: React.FC = () => {
                                 <span
                                     style={{
                                         opacity: Math.sin(frame * 0.15) > 0 ? 1 : 0,
-                                        color: COLORS.good,
                                     }}
                                 >
                                     |

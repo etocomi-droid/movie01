@@ -1,6 +1,6 @@
 // Scene 2: Conclusion First (0:15~0:40, 25s = 750 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
 import { Particles } from "./Particles";
 
@@ -45,6 +45,7 @@ export const Scene2Conclusion: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene2.mp3")} />
             <Particles count={15} color={COLORS.accent} />
 
             {/* Label */}

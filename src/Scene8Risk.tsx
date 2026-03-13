@@ -1,7 +1,8 @@
 // Scene 8: Risk Warning (3:25~3:55, 30s = 900 frames)
 import React from "react";
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring, Audio, staticFile } from "remotion";
 import { COLORS, FONT_FAMILY } from "./styles";
+import { Particles } from "./Particles";
 
 const risks = [
     { label: "外部誘導NG", desc: "他サイトへの不正な誘導は規約違反・炎上リスク" },
@@ -40,6 +41,8 @@ export const Scene8Risk: React.FC = () => {
                 alignItems: "center",
             }}
         >
+            <Audio src={staticFile("audio/scene8.mp3")} />
+            <Particles count={15} color={COLORS.accent} />
             {/* Warning glow */}
             <div
                 style={{
